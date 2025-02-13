@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <h2>Login</h2>
+  
+  <form id="loginForm">
+    <div>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required value="admin">
+    </div>
+    
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required value="password">
+    </div>
+    
+    <button type="submit">Login</button>
+  </form>
+
+  <div id="message"></div>
+
+  <script>
+
+
+
+const BASE_URL= "http://dhuni-dev-test.runasp.net"
+const refreshAuthToken = async () => {
+    try {
+      const params = new URLSearchParams();
+      params.append("grant_type", "refresh_token");
+      params.append("refresh_token", "your_refresh_token_here"); // Add your actual refresh token here
+      const response = await axios.post(`${BASE_URL}/token`, params, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+        },
+        withCredentials: true, // Ensure the cookie is sent with the request
+      })
+   
+         console.log(response)
+      return newAccessToken
+    } catch (error) {
+      
+  
+  
+      return null
+    }
+  }
+    // Get the form element and add a submit event listener
+    const loginForm = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
+
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Prevent form submission and page reload
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // Create form data as URL encoded string
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+      formData.append('grant_type', 'password');
+
+      // Make the request using axios
+      axios.post(`${BASE_URL}/token`, formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        withCredentials: true  // This ensures cookies are sent and received
+      })
+      .then(async(response) => {
+        console.log('Token received:', response.data);
+        messageDiv.innerHTML = '<p>Login successful! Token received.</p>';
+
+
+
+
+       await refreshAuthToken()
+
+
+      })
+      .catch((error) => {
+        console.error('Login error:', error);
+        messageDiv.innerHTML = '<p>Login failed. Please try again.</p>';
+      });
+    });
+
+
+
+</script>
+</body>
+</html>
+ 
